@@ -1,10 +1,14 @@
 import textwrap
 from dotenv import load_dotenv
 
+# Gemini AI client imports
 from google import genai
 from google.genai.errors import APIError
 
+# Load environment variables from .env file
 load_dotenv()
+
+# Main model for chatbot responses
 Main_model = "gemini-2.5-flash"
 
 # Summary model for summarization tasks
@@ -33,6 +37,7 @@ SUMMARY_PROMPT_TEMPLATE = textwrap.dedent("""
     Summary:
 """)
 
+# Format conversation history for prompts(user:model)
 def format_history(history):
   return "\n".join([f"User: {turn['user']}\nBot: {turn['bot']}" for turn in history])
 
@@ -59,6 +64,7 @@ def generate_summary(client, history):
         print(f"API Error during summarization: {e}")
         return "Summary unavailable.", history
 
+# Build the context for the main model
 def build_context(summary, history):
   recent_text = format_history(history)
   return textwrap.dedent(f"""
@@ -71,7 +77,7 @@ def build_context(summary, history):
         {recent_text}
     """)
 
-
+# Main chatbot function
 def chatbot():
   try:
     # Client autometically gets the API key from the GEMINI_API_KEY from .env
